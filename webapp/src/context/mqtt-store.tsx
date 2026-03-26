@@ -4,13 +4,12 @@ import { IClientOptions } from "mqtt";
 import { Buffer } from "buffer";
 
 export interface MQTTStoreContextProps {
-    data: any;
+    data?: { Topic: string, Value: any };
     publish: (message: any) => void;
 }
 
 const defaultValue: Partial<MQTTStoreContextProps> = {
-    data: undefined,
-    publish: () => { }
+
 };
 
 const MQTTStoreContext = createContext<MQTTStoreContextProps>(defaultValue as MQTTStoreContextProps);

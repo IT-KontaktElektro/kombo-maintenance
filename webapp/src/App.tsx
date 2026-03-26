@@ -13,11 +13,12 @@ function App() {
 
   useEffect(() => {
     if (data) {
-      if (typeof data.Progress === 'number') {
-        setProgress(data.Progress);
+      if (typeof data.Value === 'number') {
+        setProgress(data.Value);
       }
-      if (typeof data.NavigateAway === 'string' && data.NavigateAway.trim() !== '') {
-        let navigationUrl: string = data.NavigateAway;
+
+      if (typeof data.Value === 'string' && data.Value.trim() !== '') {
+        let navigationUrl: string = data.Value;
         window.location.href = navigationUrl;
       }
     }
