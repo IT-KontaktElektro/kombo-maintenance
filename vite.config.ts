@@ -12,7 +12,7 @@ export default defineConfig({
     target: 'esnext',
     sourcemap: false,
     minify: 'esbuild',
-    outDir: '../wwwroot',   // ✅ build output goes here
+    outDir: 'C:/inetpub-maintenance',   // ✅ build output goes here
     emptyOutDir: true,   // ✅ cleans wwwroot before each build
   }
 })
