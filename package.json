@@ -2,16 +2,23 @@
   "name": "kombo-maintenance",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
+    "start": "vite",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.9",
+    "mqtt": "^5.15.0",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-device-detect": "^2.2.3",
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.13.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
