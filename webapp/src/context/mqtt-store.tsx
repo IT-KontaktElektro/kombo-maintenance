@@ -19,14 +19,21 @@ export interface MQTTStoreProviderProps {
     children: React.ReactNode;
 }
 
+const mqttHost = import.meta.env.VITE_MQTT_HOST;
+const mqttPort = import.meta.env.VITE_MQTT_PORT;
+const mqttWsPort = import.meta.env.VITE_MQTT_WS_PORT;
+const userName = import.meta.env.VITE_MQTT_USERNAME;
+const pwd = import.meta.env.VITE_MQTT_PASSWORD;
+const protocol = import.meta.env.VITE_MQTT_PROTOCOL;
+
 const MQTT_SERVER = {
     name: "Kombo MQTT",
-    host: "10.79.3.200",
-    mqttPort: 1883,
-    wsPort: 8883,
-    username: "admin",
-    password: "Kontakt1234!",
-    protocol: "wss://",
+    host: mqttHost,
+    mqttPort: Number(mqttPort),
+    wsPort: Number(mqttWsPort),
+    username: userName,
+    password: pwd,
+    protocol: protocol,
 };
 
 const MQTT_TOPIC = "Maintenance";
@@ -36,7 +43,7 @@ export function MQTTProvider(props: MQTTStoreProviderProps) {
     const [localMessage, setLocalMessage] = useState<{ topic: string, message: any }>();
     const [client, setClient] = useState<mqtt.MqttClient>();
     const [data, setData] = useState<{ Topic: string, Value: any }>();
-    const [connected, setConnected] = useState<boolean>(false);
+    const [connected, setConnected] = useState<boolean>(false)
 
     useEffect(() => {
         function clearTopic(): void {
