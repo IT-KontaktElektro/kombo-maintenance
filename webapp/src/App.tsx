@@ -21,9 +21,11 @@ function App() {
   const [hasErrorOccured, setHasErrorOccured] = useState<boolean>(false);
 
   useEffect(() => {
-    if (data && typeof data.Value === 'number' && data.Value === 1 && !started) {
+    if (data && typeof data.Value === 'number' && data.Value === 1 && (!started || hasErrorOccured)) {
       setProgress(1);
       setStarted(true);
+      setHasErrorOccured(false);
+      setStep(0);
     }
   }, [data, started]);
 
@@ -48,21 +50,19 @@ function App() {
 
   useEffect(() => {
     if (data) {
-      if (typeof data.Value === 'number') {
+      if (typeof data.Value === "string" && data.Value.trim() === "error") {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        setProgress(0);
+        setHasErrorOccured(true);
+        setStarted(false);
+        setStep(0);
+      } else if (typeof data.Value === 'number' && started && !hasErrorOccured) {
         if (step < MQTT_STEPS.length && progress >= PROGRESS_STEPS[step]) {
           setProgress(MQTT_STEPS[step]);
           setStep((s) => s + 1);
         }
-      }
-
-      if (typeof data.Value === 'string' && data.Value.trim() === 'navigate') {
+      } else if (typeof data.Value === 'string' && data.Value.trim() === 'navigate') {
         navigate(-1);
-      }
-
-      if (typeof data.Value === 'string' && data.Value.trim() === 'error') {
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        setProgress(0);
-        setHasErrorOccured(true);
       }
     }
   }, [data]);
