@@ -35,7 +35,7 @@ const MQTT_SERVER = {
     protocol: protocol,
 };
 
-const MQTT_TOPIC = "Maintenance";
+const MQTT_TOPIC = "MaintenancePage";
 
 export function MQTTProvider(props: MQTTStoreProviderProps) {
     const { children } = props;
