@@ -5,11 +5,13 @@ import { Box, Typography } from '@mui/material';
 import useMQTTStore from './context/mqtt-store';
 import { useEffect, useState } from 'react';
 import CircularProgressWithLabel from './circular-progress';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
   const theme: Theme = defaultDark;
   const { data } = useMQTTStore();
   const [progress, setProgress] = useState<number>(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data) {
@@ -18,8 +20,7 @@ function App() {
       }
 
       if (typeof data.Value === 'string' && data.Value.trim() !== '') {
-        let navigationUrl: string = data.Value;
-        window.location.href = navigationUrl;
+        navigate(-1);
       }
     }
   }, [data]);
@@ -42,8 +43,8 @@ function App() {
       <Typography variant="h4" sx={{ mt: 3, fontWeight: 600, color: 'white' }}>
         Az oldal éppen frissül
       </Typography>
-      <Typography variant="body1" sx={{ mt: 1, opacity: 0.7, color: 'white' }}>
-        Kérjük, próbáld újra néhány perc múlva!
+      <Typography variant="h6" sx={{ mt: 0, opacity: 0.7, color: 'white' }}>
+        Ne lépjenek el az oldalról!
       </Typography>
     </Box>
   )
