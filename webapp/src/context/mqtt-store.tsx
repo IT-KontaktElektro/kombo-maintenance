@@ -52,7 +52,7 @@ export function MQTTProvider(props: MQTTStoreProviderProps) {
         }
 
         if (localMessage) {
-            if (localMessage.topic === "Maintenance") {
+            if (localMessage.topic === "MaintenancePage") {
                 const decoder = new TextDecoder("utf-8");
                 const jsonString = decoder.decode(localMessage.message);
                 if (jsonString === "{}") {
