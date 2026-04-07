@@ -18,6 +18,7 @@ function App() {
   const [step, setStep] = useState<number>(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [started, setStarted] = useState<boolean>(false);
+  const [hasErrorOccured, setHasErrorOccured] = useState<boolean>(false);
 
   useEffect(() => {
     if (data && typeof data.Value === 'number' && data.Value === 1 && !started) {
@@ -47,13 +48,21 @@ function App() {
 
   useEffect(() => {
     if (data) {
-      if (step < MQTT_STEPS.length && progress >= PROGRESS_STEPS[step]) {
-        setProgress(MQTT_STEPS[step]);
-        setStep((s) => s + 1);
+      if (typeof data.Value === 'number') {
+        if (step < MQTT_STEPS.length && progress >= PROGRESS_STEPS[step]) {
+          setProgress(MQTT_STEPS[step]);
+          setStep((s) => s + 1);
+        }
       }
 
       if (typeof data.Value === 'string' && data.Value.trim() === 'navigate') {
         navigate(-1);
+      }
+
+      if (typeof data.Value === 'string' && data.Value.trim() === 'error') {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        setProgress(0);
+        setHasErrorOccured(true);
       }
     }
   }, [data]);
@@ -73,12 +82,25 @@ function App() {
       }}
     >
       <CircularProgressWithLabel value={progress} />
-      <Typography variant="h4" sx={{ mt: 3, fontWeight: 600, color: 'white' }}>
-        Az oldal éppen frissül
-      </Typography>
-      <Typography variant="h6" sx={{ mt: 0, opacity: 0.7, color: 'white' }}>
-        Ne lépjenek el az oldalról!
-      </Typography>
+      {hasErrorOccured ? (
+        <>
+          <Typography variant="h4" sx={{ mt: 3, fontWeight: 600, color: 'red' }}>
+            Leállás történt!
+          </Typography>
+          <Typography variant="h6" sx={{ mt: 0, opacity: 0.7, color: 'white' }}>
+            Kérjük, próbáld újra később.
+          </Typography>
+        </>
+      ) : (
+        <>
+          <Typography variant="h4" sx={{ mt: 3, fontWeight: 600, color: 'white' }}>
+            Az oldal éppen frissül
+          </Typography>
+          <Typography variant="h6" sx={{ mt: 0, opacity: 0.7, color: 'white' }}>
+            Ne lépjenek el az oldalról!
+          </Typography>
+        </>
+      )}
     </Box>
   )
 }
