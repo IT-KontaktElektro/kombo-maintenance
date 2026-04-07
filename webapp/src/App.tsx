@@ -17,8 +17,17 @@ function App() {
   const navigate = useNavigate();
   const [step, setStep] = useState<number>(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [started, setStarted] = useState<boolean>(false);
 
   useEffect(() => {
+    if (data && typeof data.Value === 'number' && data.Value === 1 && !started) {
+      setProgress(1);
+      setStarted(true);
+    }
+  }, [data, started]);
+
+  useEffect(() => {
+    if (!started) return;
     if (step < PROGRESS_STEPS.length) {
       intervalRef.current = setInterval(() => {
         setProgress((prev) => {
@@ -34,7 +43,7 @@ function App() {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [step]);
+  }, [step, started]);
 
   useEffect(() => {
     if (data) {
