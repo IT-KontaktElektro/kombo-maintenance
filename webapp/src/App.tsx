@@ -7,46 +7,44 @@ import { useEffect, useRef, useState } from 'react';
 import CircularProgressWithLabel from './circular-progress';
 import { useNavigate } from 'react-router-dom';
 
-const PROGRESS_STEPS = [29, 59, 89, 99];
-const MQTT_STEPS = [30, 60, 90, 100];
+const TOTAL_DURATION_MS = 3.5 * 60 * 1000; // 3.5 perc milliszekundumban
+const INTERVAL_MS = 100; // progress frissítés gyakorisága
 
 function App() {
   const theme: Theme = defaultDark;
   const { data } = useMQTTStore();
   const [progress, setProgress] = useState<number>(0);
   const navigate = useNavigate();
-  const [step, setStep] = useState<number>(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [started, setStarted] = useState<boolean>(false);
   const [hasErrorOccured, setHasErrorOccured] = useState<boolean>(false);
+  const startTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (data && typeof data.Value === 'number' && data.Value === 1 && (!started || hasErrorOccured)) {
-      setProgress(1);
+      setProgress(0);
       setStarted(true);
       setHasErrorOccured(false);
-      setStep(0);
+      startTimeRef.current = Date.now();
     }
-  }, [data, started]);
+  }, [data]);
 
   useEffect(() => {
     if (!started) return;
-    if (step < PROGRESS_STEPS.length) {
-      intervalRef.current = setInterval(() => {
-        setProgress((prev) => {
-          if (prev < PROGRESS_STEPS[step]) {
-            return prev + 1;
-          } else {
-            if (intervalRef.current) clearInterval(intervalRef.current);
-            return prev;
-          }
-        });
-      }, 100);
-    }
+    if (intervalRef.current) clearInterval(intervalRef.current);
+
+    intervalRef.current = setInterval(() => {
+      if (startTimeRef.current) {
+        const elapsed = Date.now() - startTimeRef.current;
+        let newProgress = Math.min((elapsed / TOTAL_DURATION_MS) * 100, 99);
+        setProgress(newProgress);
+      }
+    }, INTERVAL_MS);
+
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [step, started]);
+  }, [started]);
 
   useEffect(() => {
     if (data) {
@@ -55,12 +53,12 @@ function App() {
         setProgress(0);
         setHasErrorOccured(true);
         setStarted(false);
-        setStep(0);
+        startTimeRef.current = null;
       } else if (typeof data.Value === 'number' && started && !hasErrorOccured) {
-        if (step < MQTT_STEPS.length && progress >= PROGRESS_STEPS[step]) {
-          setProgress(MQTT_STEPS[step]);
-          setStep((s) => s + 1);
-        }
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        setProgress(100);
+        setStarted(false);
+        startTimeRef.current = null;
       } else if (typeof data.Value === 'string' && data.Value.trim() === 'navigate') {
         navigate(-1);
       }
