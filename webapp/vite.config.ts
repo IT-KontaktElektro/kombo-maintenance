@@ -4,6 +4,7 @@ import viteCompression from 'vite-plugin-compression';
 import svgr from '@svgr/rollup';
 
 export default defineConfig({
+  base: "/maintenance/",
   plugins: [
     react(),
     svgr(),
