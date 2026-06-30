@@ -59,7 +59,9 @@ export function MQTTProvider(props: MQTTStoreProviderProps) {
                     setData(undefined);
                 } else {
                     try {
-                        const payload = JSON.parse(jsonString);
+                        const payload = {
+                            Topic: MQTT_TOPIC, Value: JSON.parse(jsonString)
+                        };
                         setData(payload);
                     } catch {
                         setData({ Topic: MQTT_TOPIC, Value: jsonString });
