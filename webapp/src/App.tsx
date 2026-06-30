@@ -62,8 +62,10 @@ function App() {
         console.log("Navigating to returnUrl:", returnUrl);
 
         if (returnUrl) {
+          console.log("Navigating to:", returnUrl);
           window.location.href = returnUrl;
         } else {
+          console.log("Navigating to root");
           window.location.href = "/";
         }
       }
