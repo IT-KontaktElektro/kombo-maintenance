@@ -5,7 +5,6 @@ import { Box, Typography } from '@mui/material';
 import useMQTTStore from './context/mqtt-store';
 import { useEffect, useRef, useState } from 'react';
 import CircularProgressWithLabel from './circular-progress';
-import { useNavigate } from 'react-router-dom';
 
 const TOTAL_DURATION_MS = 3.5 * 60 * 1000; // 3.5 perc milliszekundumban
 const INTERVAL_MS = 100; // progress frissítés gyakorisága
@@ -14,7 +13,6 @@ function App() {
   const theme: Theme = defaultDark;
   const { data } = useMQTTStore();
   const [progress, setProgress] = useState<number>(0);
-  const navigate = useNavigate();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [started, setStarted] = useState<boolean>(false);
   const [hasErrorOccured, setHasErrorOccured] = useState<boolean>(false);
@@ -60,7 +58,14 @@ function App() {
         setStarted(false);
         startTimeRef.current = null;
       } else if (typeof data.Value === 'string' && data.Value.trim() === 'navigate') {
-        navigate(-1);
+        const returnUrl = sessionStorage.getItem("returnUrl");
+        console.log("Navigating to returnUrl:", returnUrl);
+
+        if (returnUrl) {
+          window.location.href = returnUrl;
+        } else {
+          window.location.href = "/";
+        }
       }
     }
   }, [data]);
